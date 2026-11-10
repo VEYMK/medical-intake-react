@@ -116,6 +116,39 @@ describe('intakeReducer', () => {
     expect(state.errors.firstName).toMatch(/от 2 до 60/)
   })
 
+  it('ignores a late blur on a field that reset has just cleared', () => {
+    let state = createInitialState()
+    state = intakeReducer(state, {
+      type: 'change',
+      name: 'birthDate',
+      value: '2015-01-01',
+    })
+    state = intakeReducer(state, { type: 'blur', name: 'birthDate' })
+    state = intakeReducer(state, { type: 'reset' })
+
+    // The dialog restores focus to the previously focused control, so this
+    // blur arrives after the reset with an empty, untouched field.
+    state = intakeReducer(state, { type: 'blur', name: 'birthDate' })
+
+    expect(state.values.birthDate).toBe('')
+    expect(state.errors).toEqual({})
+    expect(state.touched.birthDate).toBeUndefined()
+  })
+
+  it('still flags an empty field the user has already touched', () => {
+    let state = createInitialState()
+    state = intakeReducer(state, {
+      type: 'change',
+      name: 'firstName',
+      value: 'Иван',
+    })
+    state = intakeReducer(state, { type: 'blur', name: 'firstName' })
+    state = intakeReducer(state, { type: 'change', name: 'firstName', value: '' })
+    state = intakeReducer(state, { type: 'blur', name: 'firstName' })
+
+    expect(state.errors.firstName).toMatch(/Заполните/)
+  })
+
   it('moves to success and error states on submit', () => {
     let state = intakeReducer(createInitialState(), { type: 'submit/start' })
     expect(state.status).toBe('submitting')

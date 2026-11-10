@@ -143,6 +143,21 @@ export function intakeReducer(state: IntakeState, action: IntakeAction): IntakeS
       const field = getField(action.name)
       if (!field) return state
 
+      // An empty field the user never interacted with is not an error yet.
+      // Besides being calmer UX, this makes reset deterministic: closing the
+      // confirm dialog restores focus to the previously focused control, and
+      // that late blur must not flag a field the reset has just cleared.
+      const currentValue = state.values[action.name]
+      const wasTouched = state.touched[action.name] === true
+      const hadError = Boolean(state.errors[action.name])
+      if (
+        !wasTouched &&
+        !hadError &&
+        (typeof currentValue === 'string' ? currentValue.trim() === '' : currentValue === false)
+      ) {
+        return state
+      }
+
       let values = state.values
       const current = values[action.name]
       if (typeof current === 'string') {
