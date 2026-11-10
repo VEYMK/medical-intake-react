@@ -1242,3 +1242,91 @@ select {
     margin-left: 0;
   }
 }
+
+/* ---------- Motion / forced colors / print ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (forced-colors: active) {
+  .btn--primary,
+  .btn--danger {
+    border: 1px solid ButtonText;
+  }
+
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    outline: 2px solid Highlight;
+    outline-offset: 2px;
+  }
+
+  .choice:has(input:checked) {
+    outline: 2px solid Highlight;
+  }
+
+  .field.has-error input,
+  .field.has-error select,
+  .field.has-error textarea {
+    border: 2px solid Mark;
+  }
+}
+
+@media print {
+  body {
+    background: #fff;
+  }
+
+  .site-header,
+  .intro,
+  .site-footer,
+  .banner,
+  .error-summary,
+  .form-actions,
+  .draft-toggle,
+  .privacy-note,
+  .privacy-details,
+  .success-actions,
+  .patients-card {
+    display: none !important;
+  }
+
+  .layout {
+    display: block;
+    padding: 0;
+  }
+
+  #intake-form,
+  .success {
+    border: 0;
+    box-shadow: none;
+    padding: 0;
+  }
+
+  .field-grid {
+    display: block;
+  }
+
+  .field {
+    margin-bottom: 1rem;
+  }
+
+  input,
+  select,
+  textarea {
+    border: 0;
+    border-bottom: 1px solid #000;
+    border-radius: 0;
+  }
+}
